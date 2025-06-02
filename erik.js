@@ -4,3 +4,5 @@ const hello = function() {
 }
 
 hello();
+const chao = true;
+
