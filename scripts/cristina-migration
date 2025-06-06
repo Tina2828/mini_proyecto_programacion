@@ -1,0 +1,55 @@
+#!/usr/local/bin/php
+<?php
+require_once __DIR__."/../core/DatabaseQueryBuilder.php";
+require_once __DIR__."/../core/DatabaseConnection.php";
+
+class RunnerMigrate  {
+
+  public function __construct(DatabaseConnection $db) {
+    $this->db = $db;
+    $this->checkMigrationsTable();
+  }
+
+  public function execute() {
+    Log::info("Starting migration process...");
+  }
+
+
+  public function checkMigrationsTable() {
+    $pdo = $this->db->getConnection();
+
+    $stm = $pdo->query("CREATE TABLE IF NOT EXISTS app_migrations (
+      id BIGINT AUTO_INCREMENT NOT NULL,
+      file VARCHAR(255) NOT NULL,
+      executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (id),
+      UNIQUE KEY (file)
+    )");
+
+    $stm->execute();
+    $migrated = [];
+
+    $builder = (new DatabaseQueryBuilder($this->db))
+      ->select(["file"])
+      ->table("app_migrations");
+
+
+    $result = $builder->get();
+
+    $builder
+       ->where("app_migrations.id", ">", 1)
+       ->update(["file" => "test"]);
+
+
+    Log::info($result);
+  }
+
+  private function migrate($file) {
+
+  }
+
+  private $db = null;
+}
+
+$runner = new RunnerMigrate(new DatabaseConnection());
+$runner->execute();

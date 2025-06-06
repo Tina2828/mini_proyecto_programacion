@@ -1,0 +1,15 @@
+# Permite reescribir las peticiones de URL
+RewriteEngine On
+
+# Si el archivo y la carpeta no existen hacer siguiente reescritura
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirecciona todas las peticiones a index
+RewriteRule ^ index.php [QSA,L]
+
+# subida de archivos en gran escala
+php_value upload_max_filesize 20M
+php_value post_max_size 20M
+php_value max_execution_time 200
+php_value max_input_time 200
