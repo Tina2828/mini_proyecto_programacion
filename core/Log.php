@@ -15,7 +15,7 @@ class Log {
 
   static public function debug(mixed $str){
     $output = new logoutput();
-    $str = $output->converttostring($str);
+    $str = $output->convertToString($str);
     $output->output("\033[34mDEBUG:\033[0m {$str}");
   }
 
@@ -40,9 +40,14 @@ class LogOutput {
   }
 
   public function convertToString(mixed $str): string {
+    if(is_null($str)) {
+      return 'null';
+    }
+
     if (is_array($str) || is_object($str)) {
       return print_r($str, true);
     }
+
     return (string)$str;
   }
 }

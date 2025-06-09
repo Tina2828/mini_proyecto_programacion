@@ -26,6 +26,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
 RUN chmod +x -R /var/www/html/scripts
+RUN chmod 644 /var/www/html/public/.htaccess
 
 ENV PATH="$PATH:/var/www/html/scripts"
 
