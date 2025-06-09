@@ -9,6 +9,7 @@ class DatabaseQueryBuilder {
     protected $select = [];
     protected $where = [];
     protected $orderBy = [];
+    protected $join = [];
     protected $limit = null;
     protected $offset = null;
 
@@ -18,6 +19,16 @@ class DatabaseQueryBuilder {
 
     public function table(string $table): self {
         $this->table = $table;
+        return $this;
+    }
+
+    public function join(string $table, string $on, string $type = 'INNER'): self
+    {
+        $this->join[] = [
+            'table' => $table,
+            'on' => $on,
+            'type' => strtoupper($type)
+        ];
         return $this;
     }
 
@@ -45,6 +56,7 @@ class DatabaseQueryBuilder {
         ];
         return $this;
     }
+
 
     public function limit(int $limit): self
     {
@@ -185,6 +197,15 @@ class DatabaseQueryBuilder {
         return $limitClause;
     }
 
+    public function buildJoin()
+    {
+        $joinClauses = [];
+        foreach ($this->join as $join) {
+            $joinClauses[] = "{$join['type']} JOIN {$join['table']} ON {$join['on']}";
+        }
+        return implode(' ', $joinClauses);
+    }
+
     public function buildOffset()
     {
         $offsetClause = '';
@@ -214,6 +235,12 @@ class DatabaseQueryBuilder {
         $select = empty($this->select) ? '*' : implode(', ', $this->select);
         $sql = "SELECT {$select} FROM {$this->table}";
 
+        // JOIN
+        if (!empty($this->join)) {
+            $join = $this->buildJoin();
+            $sql .= " {$join}";
+        }
+
         // WHERE
         if(!empty($this->where)) {
             $where = $this->buildWhere();
@@ -230,8 +257,6 @@ class DatabaseQueryBuilder {
             $sql .= $this->buildLimit();
         }
 
-        Log::info($sql);
-
         return ['sql' => $sql, 'params' => $params];
     }
 
@@ -239,27 +264,22 @@ class DatabaseQueryBuilder {
     {
         foreach ($params as $key => $value) {
           $paramKey = ":{$prefix}_{$key}";
-          Log::info([$paramKey, $value]);
 
           if (is_int($value)) {
-            Log::info("Binding integer: {$paramKey} = {$value}");
             $statement->bindParam($paramKey, $value, PDO::PARAM_INT);
             continue;
           }
 
           if (is_bool($value)) {
-            Log::info("Binding boolean: {$paramKey} = {$value}");
             $statement->bindParam($paramKey, $value, PDO::PARAM_BOOL);
             continue;
           }
 
           if (is_null($value)) {
-            Log::info("Binding NULL: {$paramKey}");
             $statement->bindParam($paramKey, null, PDO::PARAM_NULL);
             continue;
           }
 
-          Log::info("Binding string: {$paramKey} = {$value}");
           $statement->bindParam($paramKey, $value);
         }
     }

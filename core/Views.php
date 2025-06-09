@@ -10,10 +10,6 @@ class Views {
      * @throws Exception If the view file does not exist.
      */
      public function render($view, $data = []) {
-
-       Log::info($view);
-       Log::info($data);
-
         // Ensure the view file exists
         if (empty($view)) {
             throw new Exception("View name cannot be empty.");
@@ -30,7 +26,7 @@ class Views {
           extract($data, EXTR_SKIP);
         }
         include $file;
-        $content = ob_get_clean();
+        $content = ob_get_contents();
         ob_end_clean();
 
        return $content;

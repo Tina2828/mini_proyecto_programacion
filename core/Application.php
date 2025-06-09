@@ -47,8 +47,6 @@ class Application {
     $handler = $route['handler'];
     $values = explode("@", $handler);
 
-    Log::debug($values);
-
     $controllerName = $values[0];
     $actionName = $values[1];
 

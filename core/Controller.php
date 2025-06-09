@@ -12,6 +12,14 @@ class Controller {
     return $this->connection;
   }
 
+  public function query(){
+    return (object) $_GET;
+  }
+
+  public function body(){
+    return (object) $_POST;
+  }
+
   /**
    * Renders a view template with the provided data.
    * @param string $template The name of the template to render.
