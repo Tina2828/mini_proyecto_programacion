@@ -20,6 +20,10 @@ class Controller {
     return (object) $_POST;
   }
 
+  public function redirect($pathname){
+    header("Location: {$pathname}");
+  }
+
   /**
    * Renders a view template with the provided data.
    * @param string $template The name of the template to render.
