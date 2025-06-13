@@ -18,7 +18,7 @@ class HomeController extends Controller {
 
   public function destroyTarea() {
     $query = $this->query();
-    TareasModel::destroy($query->id);
+    TareasModel::destroy($this->connection, $query->id);
     $this->redirect('/tareas');
   }
 

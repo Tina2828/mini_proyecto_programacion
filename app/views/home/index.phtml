@@ -17,7 +17,9 @@
 </head>
 <body>
   <center><h2>Tareas</h2></center>
-  <table style=" width:100%;">
+  <a href = "/tareas/new">Nueva Tarea</a>
+
+ <table style=" width:100%;">
     <tr>
       <th>Titulo</th>
       <th>Fecha de entrega</th>
@@ -38,6 +40,10 @@
         <td><?= $tarea->created_at ?></td>
         <td><?= $tarea->updated_at ?></td>
         <td><?= $tarea->completed_at ?></td>
+        <td>
+          <a href = "/tareas/edit?id=<?= $tarea->id ?>">Editar</a>
+          <a href = "/tareas/delete?id=<?= $tarea->id ?>">Eliminar</a>
+        </td>
       </tr>
     <?php }  ?>
   </table>
