@@ -62,6 +62,10 @@ class HomeController extends Controller {
           ->required()
           ->min(8)
           ->max(500),
+       "priority" => Validator::string()
+         ->trim()
+         ->required()
+         ->enum(['baja', 'media', 'alta']),
     ]);
 
     return $schema;
