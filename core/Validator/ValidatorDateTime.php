@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__."/ValidatorRule.php";
 
-class ValidatorString implements ValidatorRule {
+class ValidatorDateTime implements ValidatorRule {
 
   public function __construct(){
     $this->rules = [];
@@ -33,68 +33,66 @@ class ValidatorString implements ValidatorRule {
     return $this;
   }
 
-  public function enum(array $values): self  {
+  public function format($format) {
     $ref = &$this;
 
-    $this->rules[] = function(string $val) use($values, &$ref) {
+    $this->rules[] = function(string|DateTime &$val) use($format, &$ref) {
       if($val == null) {
         return;
       }
 
-      if(in_array($val, $values)) {
+      if($val instanceof DateTime) {
         return;
       }
 
-      $ref->errors[] = "El valor no esta en los valores permitido";
+      $val =  DateTime::createFromFormat($format, $val);
+      if($val){
+        return;
+      }
+
+      $ref->errors[] = "El valor obtenido no de fecha";
     };
 
     return $this;
   }
 
-  public function trim(): self {
-    $this->rules[] = function(string &$val) {
-      $val = trim($val);
-    };
-
-    return $this;
-  }
-
-  public function max(int $length): self {
+  public function min(DateTime $date) {
     $ref = &$this;
 
-    $this->rules[] = function (string $val) use($length, &$ref) {
-      if($val == null){
+    $this->rules[] = function(null|DateTime $val) use($date, &$ref) {
+      if($val == null) {
         return;
       }
 
-      if(strlen($val) <= $length) {
+      if($date->getTimestamp() <= $val->getTimestamp()){
         return;
       }
 
-      $ref->errors[] = "No puede tener mas de {$length} caracteres";
+      $ref->errors[] = "El valor obtenido no de fecha";
     };
 
     return $this;
   }
 
-  public function min(int $length): self {
+  public function max(DateTime $date) {
     $ref = &$this;
 
-    $this->rules[] = function (string $val) use($length, &$ref) {
-      if($val == null){
+    $this->rules[] = function(null|DateTime $val) use($date, &$ref) {
+      if($val == null) {
         return;
       }
 
-      if(strlen($val) >= $length) {
+      if($date->getTimestamp() >= $val->getTimestamp()){
         return;
       }
 
-      $ref->errors[] = "Debe tener al menos {$length} caracteres";
+      $ref->errors[] = "El valor obtenido no de fecha";
     };
 
     return $this;
   }
 
-  private $rules = null;
+
   private $errors = null;
+  private $rules = null;
 }
