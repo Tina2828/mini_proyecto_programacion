@@ -13,7 +13,6 @@ class HomeController extends Controller {
       ->limit(20);
 
     $tareas = $query->get();
-
     $this->render('home/index', [ "tareas" => $tareas ]);
   }
 

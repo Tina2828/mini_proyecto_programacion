@@ -16,49 +16,31 @@
     </style>
 </head>
 <body>
+  <center><h2>Tareas</h2></center>
+  <table style=" width:100%;">
+    <tr>
+      <th>Titulo</th>
+      <th>Fecha de entrega</th>
+      <th>Categorias</th>
+      <th>Prioridad</th>
+      <th>Estado</th>
+      <th>Creado</th>
+      <th>Actualizado</th>
+      <th>Completado</tr>
+    </tr>
+    <?php foreach($tareas as $tarea) { ?>
+      <tr>
+        <td><?= $tarea->title ?></td>
+        <td><?= $tarea->due_date ?></td>
+        <td><?= $tarea->categoria_nombre ?></td>
+        <td><?= $tarea->priority ?></td>
+        <td><?= $tarea->status ?></td>
+        <td><?= $tarea->created_at ?></td>
+        <td><?= $tarea->updated_at ?></td>
+        <td><?= $tarea->completed_at ?></td>
+      </tr>
+    <?php }  ?>
+  </table>
 
-    <center><h2>Tareas</h2>
-    <table style=" width:500px">
-
-        <tr>
-            <th>Titulo</th>
-        <th>Fecha de entrega</th>
-            <th>Categorias</th>
-            <th>Prioridad</th>
-            <th>Estado</th>
-            <th>Creado</th>
-            <th>Actualizado</th>
-            <th>Completado</th>
-
-
-
-
-
-
-         </tr>
-
-
-         <tr>
-        <td colspan="1"> </td>
-        </tr>
-         <tr>
-            <th rowspan="1"></th>
-        </tr>
-        <td rowspan="1"> </td>
-        </tr>
-
-         <tr>
-        <td colspan="1"> </td>
-        </tr>
-         </tr>
-        <tr>
-        <td rowspan="1"> </td>
-        </tr>
-
-         <tr>
-        <td colspan="1"> </td>
-        </tr>
-
-    </table></center>
 </body>
 </html>
