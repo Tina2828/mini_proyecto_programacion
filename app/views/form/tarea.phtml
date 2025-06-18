@@ -1,2 +1,17 @@
-<form>
+<form method = "post" action = "<?= $action; ?>">
+  <div>
+    <div>
+      <label>Titulo</label>
+    </div>
+    <div><input placeholder = "Titulo" name = "title" /></div>
+  </div>
+  <div>
+    <div>
+      <label>Descripción</label>
+    </div>
+    <div><input placeholder = "Descripción" name = "description" /></div>
+  </div>
+  <div>
+    <button type ="submit">Guardar</button>
+  </div>
 </form>

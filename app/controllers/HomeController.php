@@ -22,13 +22,28 @@ class HomeController extends Controller {
     $this->redirect('/tareas');
   }
 
+  public function newTarea(){
+     $this->render("form/tarea", []);
+  }
+
+  public function editTarea() {
+    $query = $this->query();
+
+    $tarea = (new TareasModel($this->connection))
+      ->query()
+      ->select(["tareas.*"])
+      ->where("tareas.id", "=", $query->id);
+
+    $this->render("form/tarea",["values" => $tarea]);
+  }
+
   public function createTarea() {
     $schema = $this->schemaTarea();
     $body = (array) $this->body();
     $valid = $schema->validate($body);
 
     if(!$valid) {
-      $this->render("form/new.phtml", ["errors" => $schema->errors(), "values" => $body]);
+      $this->render("form/tarea", ["errors" => $schema->errors(), "values" => $body]);
       return;
     }
 
