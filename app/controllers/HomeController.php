@@ -2,6 +2,7 @@
 require_once __DIR__.'/../../core/Controller.php';
 require_once __DIR__."/../models/TareasModel.php";
 require_once __DIR__."/../models/CategoriasModel.php";
+require_once __DIR__."/../../core/Validator/index.php";
 
 class HomeController extends Controller {
 
@@ -23,7 +24,7 @@ class HomeController extends Controller {
   }
 
   public function newTarea(){
-     $this->render("form/tarea", []);
+     $this->render("form/tarea", ["action" => "/tareas/create"]);
   }
 
   public function editTarea() {
@@ -32,9 +33,10 @@ class HomeController extends Controller {
     $tarea = (new TareasModel($this->connection))
       ->query()
       ->select(["tareas.*"])
-      ->where("tareas.id", "=", $query->id);
+      ->where("tareas.id", "=", $query->id)
+      ->first();
 
-    $this->render("form/tarea",["values" => $tarea]);
+    $this->render("form/tarea",["values" => (array) $tarea]);
   }
 
   public function createTarea() {
@@ -43,7 +45,7 @@ class HomeController extends Controller {
     $valid = $schema->validate($body);
 
     if(!$valid) {
-      $this->render("form/tarea", ["errors" => $schema->errors(), "values" => $body]);
+      $this->render("form/tarea", ["errors" => $schema->errors(), "values" => $body, "action" => "/tareas/create"]);
       return;
     }
 

@@ -36,7 +36,7 @@ class ValidatorString implements ValidatorRule {
   public function enum(array $values): self  {
     $ref = &$this;
 
-    $this->rules[] = function(string $val) use($values, &$ref) {
+    $this->rules[] = function(null|string $val) use($values, &$ref) {
       if($val == null) {
         return;
       }
@@ -52,7 +52,11 @@ class ValidatorString implements ValidatorRule {
   }
 
   public function trim(): self {
-    $this->rules[] = function(string &$val) {
+    $this->rules[] = function(string|null &$val) {
+      if(!$val){
+        return;
+      }
+
       $val = trim($val);
     };
 
@@ -62,7 +66,7 @@ class ValidatorString implements ValidatorRule {
   public function max(int $length): self {
     $ref = &$this;
 
-    $this->rules[] = function (string $val) use($length, &$ref) {
+    $this->rules[] = function (null|string $val) use($length, &$ref) {
       if($val == null){
         return;
       }
@@ -80,7 +84,7 @@ class ValidatorString implements ValidatorRule {
   public function min(int $length): self {
     $ref = &$this;
 
-    $this->rules[] = function (string $val) use($length, &$ref) {
+    $this->rules[] = function (null|string $val) use($length, &$ref) {
       if($val == null){
         return;
       }

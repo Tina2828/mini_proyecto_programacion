@@ -36,7 +36,7 @@ class ValidatorDateTime implements ValidatorRule {
   public function format($format) {
     $ref = &$this;
 
-    $this->rules[] = function(string|DateTime &$val) use($format, &$ref) {
+    $this->rules[] = function(string|DateTime|null &$val) use($format, &$ref) {
       if($val == null) {
         return;
       }

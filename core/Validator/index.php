@@ -19,7 +19,8 @@ class Validator implements ValidatorRule {
     $rules = $this->rules;
 
     foreach($rules as $key => $rule) {
-      $valid = $rule->validate($value[$key]);
+      $curr_val = empty($value[$key]) ? null : $value[$key];
+      $valid = $rule->validate($curr_val);
 
       if($valid){
         continue;
@@ -32,7 +33,7 @@ class Validator implements ValidatorRule {
   }
 
   public function errors() {
-    return $this->errors();
+    return $this->errors;
   }
 
   static public function string() {

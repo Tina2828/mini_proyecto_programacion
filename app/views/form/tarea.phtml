@@ -3,15 +3,30 @@
     <div>
       <label>Titulo</label>
     </div>
-    <div><input placeholder = "Titulo" name = "title" /></div>
+    <div>
+      <input placeholder = "Titulo" name = "title"  value = "<?= empty($values["title"]) ? "" : $values["title"] ?>" />
+    </div>
+    <? if( !empty($errors["title"]) ) {?>
+      <div>
+        <p><?= implode(",", $errors["title"]); ?></p>
+      </div>
+    <? } ?>
   </div>
   <div>
     <div>
       <label>Descripción</label>
     </div>
-    <div><input placeholder = "Descripción" name = "description" /></div>
+    <div>
+      <input placeholder = "Descripción" name = "description" value = "<?= empty($value["description"]) ? "" : $values["description"] ?>" />
+    </div>
+    <? if( !empty($errors["title"]) ) {?>
+      <div>
+        <p><?= implode(",", $errors["title"]); ?></p>
+      </div>
+    <? } ?>
   </div>
   <div>
+    <button onclick ="history.go(-1);">Cancelar</button>
     <button type ="submit">Guardar</button>
   </div>
 </form>
