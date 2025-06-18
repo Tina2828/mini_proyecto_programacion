@@ -24,7 +24,8 @@ class HomeController extends Controller {
   }
 
   public function newTarea(){
-     $this->render("form/tarea", ["action" => "/tareas/create"]);
+     $categories = (new CategoriasModel($this->connection))->query()->get();
+     $this->render("form/tarea", ["action" => "/tareas/create", "categorias" => $categories]);
   }
 
   public function editTarea() {
@@ -37,7 +38,8 @@ class HomeController extends Controller {
       ->first();
 
     $tarea = (array) $tarea;
-    $this->render("form/tarea",["values" => $tarea, "action" => "/tareas/update?id={$query->id}"]);
+    $categories = (new CategoriasModel($this->connection))->query()->get();
+    $this->render("form/tarea",["values" => $tarea, "action" => "/tareas/update?id={$query->id}", "categorias" => $categories]);
   }
 
   public function createTarea() {
@@ -45,8 +47,16 @@ class HomeController extends Controller {
     $body = (array) $this->body();
     $valid = $schema->validate($body);
 
+    Log::info($schema->errors());
+
     if(!$valid) {
-      $this->render("form/tarea", ["errors" => $schema->errors(), "values" => $body, "action" => "/tareas/create"]);
+      $categories = (new CategoriasModel($this->connection))->query()->get();
+      $this->render("form/tarea", [
+        "errors" => $schema->errors(),
+        "values" => $body,
+        "action" => "/tareas/create",
+        "categorias" => $categories
+      ]);
       return;
     }
 
@@ -66,7 +76,14 @@ class HomeController extends Controller {
     $valid = $schema->validate($body);
 
     if(!$valid) {
-      $this->render("form/tarea", ["errors" => $schema->errors(), "values" => $body, "action" => "/tareas/update?id={$query->id}"]);
+      $categories = (new CategoriasModel($this->connection))->query()->get();
+      $this->render("form/tarea", [
+        "errors" => $schema->errors(),
+        "categorias" => $categories,
+        "values" => $body,
+        "action" => "/tareas/update?id={$query->id}"
+      ]);
+
       return;
     }
 
@@ -95,10 +112,15 @@ class HomeController extends Controller {
           ->required()
           ->min(8)
           ->max(500),
-       /*"priority" => Validator::string()
+       "priority" => Validator::string()
          ->trim()
          ->required()
-         ->enum(['baja', 'media', 'alta']),*/
+         ->enum(['baja', 'media', 'alta']),
+       "category_id" => Validator::number()
+          ->required()
+          ->positive()
+          ->integer()
+          ->exists($this->connection, "categories")
     ]);
 
     return $schema;

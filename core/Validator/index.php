@@ -3,6 +3,8 @@
 require_once __DIR__."/ValidatorRule.php";
 require_once __DIR__."/ValidatorString.php";
 require_once __DIR__."/ValidatorDateTime.php";
+require_once __DIR__."/ValidatorNumber.php";
+
 
 class Validator implements ValidatorRule {
   public function __construct(array $rules) {
@@ -42,6 +44,10 @@ class Validator implements ValidatorRule {
 
   static public function datetime() {
     return new ValidatorDateTime();
+  }
+
+  static public function number() {
+    return new ValidatorNumber();
   }
 
   private $errors = null;

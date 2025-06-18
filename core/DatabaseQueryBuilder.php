@@ -1,7 +1,5 @@
 <?php
-
 require_once __DIR__.'/DatabaseConnection.php';
-
 
 class DatabaseQueryBuilder {
     protected $connection;
@@ -104,15 +102,16 @@ class DatabaseQueryBuilder {
 
         $setClauses = [];
         foreach ($data as $column => $value) {
-            $setClauses[] = "`{$this->table}`.`{$column}` = :update_{$column}";
+            $setClauses[] = "`{$column}` = :update_{$column}";
         }
         $setClause = implode(', ', $setClauses);
 
         $query = "UPDATE {$this->table} SET {$setClause} " . $this->buildWhere();
         $statement = $this->connection->getConnection()->prepare($query);
 
-        $this->bindParams($statement, 'update', $data);
         $this->bindParams($statement, 'where', $this->bindWhere());
+        $this->bindParams($statement, 'update', $data);
+
         $statement->execute();
 
         Log::info("\033[33m{$statement->queryString}\033[0m");
@@ -136,24 +135,23 @@ class DatabaseQueryBuilder {
         return $statement->rowCount() || 0;
     }
 
-
-
-    public function insert(array $data): int
+    public function insert(array $data): stdClass
     {
         if (empty($data)) {
             throw new Exception("Insert requires data.");
         }
 
         $columns = implode(', ', array_keys($data));
-        $placeholders = implode(', ', array_map(fn($col) => ":{$col}", array_keys($data)));
+        $placeholders = implode(', ', array_map(fn($col) => ":insert_{$col}", array_keys($data)));
 
         $query = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
-        $statement = $this->connection->prepare($query);
-        $this->bindParams($statement, 'insert', $data);
+        $statement = $this->connection->getConnection()->prepare($query);
+
+        $this->bindParams($statement, "insert", $data);
 
         $statement->execute();
         Log::info("\033[32m{$statement->queryString}\033[0m");
-        $id = $this->connection->lastInsertId();
+        $id = $this->connection->getConnection()->lastInsertId();
 
         $builder = new self($this->connection);
         $builder->table($this->table);
@@ -260,30 +258,33 @@ class DatabaseQueryBuilder {
         return ['sql' => $sql, 'params' => $params];
     }
 
-    public function bindParams(PDOStatement &$statement,$prefix = "", $params = []): void
-    {
-        foreach ($params as $key => $value) {
-          $paramKey = ":{$prefix}_{$key}";
+    public function bindParams(PDOStatement &$statement, $prefix = "", $params = []): void {
+      foreach ($params as $key => $value) {
+        $paramKey = ":{$prefix}_{$key}";
 
-          if (is_int($value)) {
-            $statement->bindParam($paramKey, $value, PDO::PARAM_INT);
+        if ($value instanceof DateTime) {
+            $formattedDate = $value->format('Y-m-d H:i:s');
+            $statement->bindValue($paramKey, $formattedDate, PDO::PARAM_STR);
             continue;
-          }
-
-          if (is_bool($value)) {
-            $statement->bindParam($paramKey, $value, PDO::PARAM_BOOL);
-            continue;
-          }
-
-          if (is_null($value)) {
-            $statement->bindParam($paramKey, null, PDO::PARAM_NULL);
-            continue;
-          }
-
-          Log::info([$paramKey, $value]);
-
-          $statement->bindParam($paramKey, $value, PDO::PARAM_STR);
         }
+
+        if (is_int($value)) {
+            $statement->bindValue($paramKey, $value, PDO::PARAM_INT);
+            continue;
+        }
+
+        if (is_bool($value)) {
+            $statement->bindValue($paramKey, $value, PDO::PARAM_BOOL);
+            continue;
+        }
+
+        if (is_null($value)) {
+            $statement->bindValue($paramKey, null, PDO::PARAM_NULL);
+            continue;
+        }
+
+        $statement->bindValue($paramKey, $value, PDO::PARAM_STR);
     }
+  }
 }
 

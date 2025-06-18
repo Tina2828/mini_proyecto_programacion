@@ -1,5 +1,5 @@
 <form method = "post" action = "<?= $action; ?>">
-  <div>
+<div>
     <div>
       <label>Titulo</label>
     </div>
@@ -19,14 +19,12 @@
     <div>
       <input placeholder = "Descripción" name = "description" value = "<?= empty($values["description"]) ? "" : $values["description"] ?>" />
     </div>
-    <? if( !empty($errors["title"]) ) {?>
+    <? if( !empty($errors["description"]) ) {?>
       <div>
-        <p><?= implode(",", $errors["title"]); ?></p>
+        <p><?= implode(",", $errors["description"]); ?></p>
       </div>
     <? } ?>
   </div>
-<!--
-
   <div>
     <div>
       <label>Prioridad</label>
@@ -44,7 +42,6 @@
       </div>
     <? } ?>
   </div>
--->
   <div>
     <div>
       <label>Vencimiento</label>
@@ -77,6 +74,24 @@
     <? if( !empty($errors["status"]) ) {?>
       <div>
         <p><?= implode(",", $errors["status"]); ?></p>
+      </div>
+    <? } ?>
+  </div>
+  <div>
+    <div>
+      <label>Categoria</label>
+    </div>
+    <div>
+      <select name = "category_id" value = "<?= empty($values["category_id"]) ? "" : $values["category_id"] ?>">
+        <option value = ""></option>
+        <? foreach($categorias as $category) { ?>
+          <option value = "<?= $category->id; ?>"><?= $category->name; ?></option>
+        <? } ?>
+      </select>
+    </div>
+    <? if( !empty($errors["category_id"]) ) {?>
+      <div>
+        <p><?= implode(",", $errors["category_id"]); ?></p>
       </div>
     <? } ?>
   </div>
