@@ -17,11 +17,66 @@
       <label>Descripción</label>
     </div>
     <div>
-      <input placeholder = "Descripción" name = "description" value = "<?= empty($value["description"]) ? "" : $values["description"] ?>" />
+      <input placeholder = "Descripción" name = "description" value = "<?= empty($values["description"]) ? "" : $values["description"] ?>" />
     </div>
     <? if( !empty($errors["title"]) ) {?>
       <div>
         <p><?= implode(",", $errors["title"]); ?></p>
+      </div>
+    <? } ?>
+  </div>
+<!--
+
+  <div>
+    <div>
+      <label>Prioridad</label>
+    </div>
+    <div>
+      <select name = "priority" value = "<?= empty($values["priority"]) ? "" : $values["priority"] ?>">
+        <option value = "baja">Baja</option>
+        <option value = "media">Media</option>
+        <option value = "alta">Alta</option>
+      </select>
+    </div>
+    <? if( !empty($errors["priority"]) ) {?>
+      <div>
+        <p><?= implode(",", $errors["priority"]); ?></p>
+      </div>
+    <? } ?>
+  </div>
+-->
+  <div>
+    <div>
+      <label>Vencimiento</label>
+    </div>
+    <div>
+      <input
+        type = "date"
+        min = "<?= date("Y-m-d") ?>"
+        name = "due_date"
+        value = "<?= empty($values["due_date"]) ? "" : DateTime::createFromFormat("Y-m-d", $values["due_date"])->format("Y-m-d"); ?>"
+      />
+    </div>
+    <? if( !empty($errors["due_date"]) ) {?>
+      <div>
+        <p><?= implode(",", $errors["due_date"]); ?></p>
+      </div>
+    <? } ?>
+  </div>
+  <div>
+    <div>
+      <label>Estado</label>
+    </div>
+    <div>
+      <select name = "status" value = "<?= empty($values["status"]) ? "" : $values["status"] ?>">
+        <option value = "pendiente">Pendiente</option>
+        <option value = "proceso">En proceso</option>
+        <option value = "finalizada">Finalizada</option>
+      </select>
+    </div>
+    <? if( !empty($errors["status"]) ) {?>
+      <div>
+        <p><?= implode(",", $errors["status"]); ?></p>
       </div>
     <? } ?>
   </div>

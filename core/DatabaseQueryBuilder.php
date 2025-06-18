@@ -81,7 +81,7 @@ class DatabaseQueryBuilder {
         return $statement->fetchAll(PDO::FETCH_CLASS, 'stdClass');
     }
 
-    public function first(): ?array
+    public function first(): ?stdClass
     {
         $this->limit(1);
         $results = $this->get();
@@ -92,7 +92,7 @@ class DatabaseQueryBuilder {
     {
         $this->select(['COUNT(*) as count']);
         $result = $this->first();
-        return $result ? (int)$result->count : 0;
+        return $result ? (int) $result->count : 0;
     }
 
 
@@ -104,7 +104,7 @@ class DatabaseQueryBuilder {
 
         $setClauses = [];
         foreach ($data as $column => $value) {
-            $setClauses[] = "{$column} = :update_{$column}";
+            $setClauses[] = "`{$this->table}`.`{$column}` = :update_{$column}";
         }
         $setClause = implode(', ', $setClauses);
 
@@ -113,8 +113,8 @@ class DatabaseQueryBuilder {
 
         $this->bindParams($statement, 'update', $data);
         $this->bindParams($statement, 'where', $this->bindWhere());
-
         $statement->execute();
+
         Log::info("\033[33m{$statement->queryString}\033[0m");
         return $this->first();
     }
@@ -280,7 +280,9 @@ class DatabaseQueryBuilder {
             continue;
           }
 
-          $statement->bindParam($paramKey, $value);
+          Log::info([$paramKey, $value]);
+
+          $statement->bindParam($paramKey, $value, PDO::PARAM_STR);
         }
     }
 }

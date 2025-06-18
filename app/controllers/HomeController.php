@@ -32,11 +32,12 @@ class HomeController extends Controller {
 
     $tarea = (new TareasModel($this->connection))
       ->query()
-      ->select(["tareas.*"])
+      ->select(["tareas.*","DATE_FORMAT(tareas.due_date, '%Y-%m-%d') AS due_date"])
       ->where("tareas.id", "=", $query->id)
       ->first();
 
-    $this->render("form/tarea",["values" => (array) $tarea]);
+    $tarea = (array) $tarea;
+    $this->render("form/tarea",["values" => $tarea, "action" => "/tareas/update?id={$query->id}"]);
   }
 
   public function createTarea() {
@@ -58,8 +59,24 @@ class HomeController extends Controller {
   }
 
   public function updateTarea() {
-    $categoriasModel = new CategoriasModel($this->connection);
-    $this->redirect('/tareas');
+    $query = $this->query();
+    $schema = $this->schemaTarea();
+    $body = (array) $this->body();
+
+    $valid = $schema->validate($body);
+
+    if(!$valid) {
+      $this->render("form/tarea", ["errors" => $schema->errors(), "values" => $body, "action" => "/tareas/update?id={$query->id}"]);
+      return;
+    }
+
+    $tareasModel = new TareasModel($this->connection);
+    $tareasModel
+        ->query()
+        ->where("id", "=", $query->id)
+        ->update($body);
+
+    $this->redirect("/tareas");
   }
 
   private function schemaTarea(): ValidatorRule {
@@ -71,17 +88,17 @@ class HomeController extends Controller {
           ->max(250),
       "due_date" => Validator::datetime()
           ->required()
-          ->format("Y-m-d H:i:s")
+          ->format("Y-m-d")
           ->min(new DateTime()),
        "description" => Validator::string()
           ->trim()
           ->required()
           ->min(8)
           ->max(500),
-       "priority" => Validator::string()
+       /*"priority" => Validator::string()
          ->trim()
          ->required()
-         ->enum(['baja', 'media', 'alta']),
+         ->enum(['baja', 'media', 'alta']),*/
     ]);
 
     return $schema;
